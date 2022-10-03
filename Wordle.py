@@ -27,7 +27,24 @@ def wordle():
             gw.set_square_letter(0, x, selectedWord[x])
 
     def enter_action(s):
-        gw.show_message("You have to implement this method.")
+        #gw.show_message("You have to implement this method.")
+        
+        inputs = [] #makes a list for the inputs
+
+        #gets the inputs
+        for i in range(0,5):
+            letter = gw.get_square_letter(gw.get_current_row(),i) 
+            inputs.append(letter.lower())
+           
+
+        #makes list of inputs into a word
+        input_word = ''.join(inputs)       
+
+        #checks if the word is in the list
+        if input_word in FIVE_LETTER_WORDS:
+            gw.show_message("Is in word list")
+        else:
+            gw.show_message("Not in word list")
 
     gw = WordleGWindow()
     randwordtofirstRow()
