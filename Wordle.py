@@ -19,45 +19,49 @@ MISSING_COLOR = "#999999" # grey
 
 def wordle():
 
+    #function that gets a random word
     def GetRandomWord() :
-        selectedWord = random.choice(FIVE_LETTER_WORDS)
-        return selectedWord
+        wordToGuess = random.choice(FIVE_LETTER_WORDS)
+        return wordToGuess
 
-    selectedWord = GetRandomWord()
+    #calls function that returns a random five letter word and sets it as the word to guess
+    wordToGuess = GetRandomWord()
 
     def randwordtofirstRow() :
-        for x in range(len(selectedWord)):
-            gw.set_square_letter(0, x, selectedWord[x])
+        for x in range(len(wordToGuess)):
+            gw.set_square_letter(0, x, wordToGuess[x])
 
+    #This is what executes when you hit enter
     def enter_action(s):
-        #gw.show_message("You have to implement this method.")
-        inputs = [] #makes a list for the inputs
+        
+        #makes a list for the keystrokes
+        keystrokes = []
 
-        #gets the inputs
+        #gets the keystrokes
         for i in range(0,5):
             letter = gw.get_square_letter(gw.get_current_row(),i) 
-            inputs.append(letter.lower())
+            keystrokes.append(letter.lower())
            
 
-        #makes list of inputs into a word
-        input_word = ''.join(inputs)       
+        #makes list of keystrokes into a word
+        currentGuessWord = ''.join(keystrokes)       
 
         #checks if the word is in the list
-        if selectedWord == input_word:
+        if wordToGuess == currentGuessWord:
             for x in range(0, N_COLS):
                 gw.set_square_color(gw.get_current_row(), x , CORRECT_COLOR)
             
             gw.show_message("You guessed it!")
             gw.set_current_row(N_ROWS + 1)
 
-        elif input_word in FIVE_LETTER_WORDS:
+        elif currentGuessWord in FIVE_LETTER_WORDS:
             gw.show_message("Is in word list")
             
             for x in range(0, N_COLS):
-                if selectedWord[x] == input_word[x]:
+                if wordToGuess[x] == currentGuessWord[x]:
                     color = CORRECT_COLOR
 
-                elif selectedWord[x] in input_word: 
+                elif wordToGuess[x] in currentGuessWord: 
                     color = PRESENT_COLOR
 
                 else :
@@ -67,27 +71,27 @@ def wordle():
                 gw.set_square_color(gw.get_current_row(), x , color)
                 
                 if color == CORRECT_COLOR:
-                    gw.set_key_color(input_word[x].upper(), color)
+                    gw.set_key_color(currentGuessWord[x].upper(), color)
                 elif color == PRESENT_COLOR:
-                    if gw.get_key_color(input_word[x].upper()) == CORRECT_COLOR:
+                    if gw.get_key_color(currentGuessWord[x].upper()) == CORRECT_COLOR:
                         pass
                     else:
-                        gw.set_key_color(input_word[x].upper(), color)
+                        gw.set_key_color(currentGuessWord[x].upper(), color)
                 else:
-                    if gw.get_key_color(input_word[x].upper()) != MISSING_COLOR:
+                    if gw.get_key_color(currentGuessWord[x].upper()) != MISSING_COLOR:
                         pass
                     else: 
-                        gw.set_key_color(input_word[x].upper(), color)
+                        gw.set_key_color(currentGuessWord[x].upper(), color)
 
-                gw.set_key_color(input_word[x].upper(), color)
+                gw.set_key_color(currentGuessWord[x].upper(), color)
 
             gw.set_current_row(gw.get_current_row() + 1)
             #Color the word appropriately
             print("N_ROWS:", N_ROWS)
             print("N_COLS:", N_COLS)
-            print("Word to guess is: " + selectedWord)
-            print("Stored inputs are: ")
-            for letter in inputs:
+            print("Word to guess is: " + wordToGuess)
+            print("Stored keystrokes are: ")
+            for letter in keystrokes:
                 print(letter)
 
         else:
