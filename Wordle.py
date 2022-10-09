@@ -1,151 +1,146 @@
 # File: Wordle.py
 
 """
-This module is the starter file for the Wordle assignment.
-BE SURE TO UPDATE THIS COMMENT WHEN YOU WRITE THE CODE.
+This module is the completed Wordle assignment.
+
+Project Manager: Sloan Nelson
+Scrum Master: Jackson Washburn
+Developers:
+    Stephen Sorensen
+    Kamryn Prock
+    Spencer Jackson
 """
 
 import random
 
 from WordleDictionary import FIVE_LETTER_WORDS
-from WordleGraphics import WordleGWindow, N_COLS, N_ROWS
-
-CORRECT_COLOR = "#66BB66" # A shade of green
-PRESENT_COLOR = "#CCBB66" # A shade of brownish yellow
-MISSING_COLOR = "#999999" # grey
+from WordleGraphics import WordleGWindow, N_COLS, N_ROWS, CORRECT_COLOR, PRESENT_COLOR, MISSING_COLOR
 
 def wordle():
 
-    #function that gets a random word
+    # This function gets a random word from WordleDictionary.py
     def GetRandomWord() :
         wordToGuess = random.choice(FIVE_LETTER_WORDS)
         return wordToGuess
 
-    #calls function that returns a random five letter word and sets it as the word to guess
+    #This uses a function to return a random five letter word and set it as the word to guess
     wordToGuess = GetRandomWord()
-    
-    print("N_ROWS:", N_ROWS)
-    print("N_COLS:", N_COLS)
-    print("Word to guess is: " + wordToGuess) 
+    print("Word to guess is: " + wordToGuess + "\n") 
 
-    def randWordToFirstRow() :
+    #This was for milestone 1 and it's use was discontinued during milestones 3&4 to be like "real" wordle
+    #Grader, please see comment near bottom of code
+    def RandomWordToFirstRow() :
         for x in range(len(wordToGuess)):
             gw.set_square_letter(0, x, wordToGuess[x])
 
-    #This is what executes when you hit enter
+    #This is the function/code that executes when you hit enter
     def enter_action(s):
 
+        #Put letters of the word that need to be guessed into a list
         remainingLetters = list(wordToGuess)
         
-        #makes a list for the keystrokes
+        #Make a list for letters of the user's guess
         keystrokes = []
 
-        #gets the keystrokes
-        #variable keystrokes is a list of letters ogtten from the current row
-        #variable currentGuessWord is a string comprised of all those letters
+        #Get the user inputs from wordle and place them in keystrokes list
         for i in range(0,5):
             letter = gw.get_square_letter(gw.get_current_row(),i) 
             keystrokes.append(letter.lower())
            
 
-        #makes list of keystrokes into a word
-        currentGuessWord = ''.join(keystrokes)      
+        #makes list of keystrokes into a string
+        currentGuessWord = ''.join(keystrokes)
+        print("**********")
+        print("Users' guess is: " + currentGuessWord)
 
-        #Checks if words match and sets all squares to green if they do
+        #Checks if guess and answer match and sets all squares to green if they do
         if wordToGuess == currentGuessWord:
             for x in range(0, N_COLS):
                 gw.set_square_color(gw.get_current_row(), x , CORRECT_COLOR)
                 gw.set_key_color(currentGuessWord[x].upper(), CORRECT_COLOR)
             
             gw.show_message("You guessed it!")
+            print("The user guessed the word correctly")
             gw.set_current_row(gw.get_current_row() + 1)
 
-        #If word is in wordlist, 
+        #If word is not a match, verify that it is acceptable guess in wordlist 
         elif currentGuessWord in FIVE_LETTER_WORDS:
             gw.show_message("Is in word list")
-            print("New valid guess: " + currentGuessWord)
+            print(currentGuessWord + " is a valid guess\n")
             
-            #This for loop takes care of all the greens
+            #This for loop takes care of all letter/keys that should be green
+            #It removes the correct letters from the user's keystrokes the letters that remain to be guessed
+            print("Marking letters that are in the correct position")
             for x in range(0, N_COLS):
                 if wordToGuess[x] == keystrokes[x]:
+                    print("Positon " + str(x) + " is a match")
                     gw.set_square_color(gw.get_current_row(), x, CORRECT_COLOR)
                     print("Set row " + str(gw.get_current_row()) + " and column " + str(x) + " to green")
                     gw.set_key_color(keystrokes[x].upper(), CORRECT_COLOR)
-                    print("Removing " + str(keystrokes[x]) + " from remaining letters and keystrokes")
                     for i in range (0, len(remainingLetters)):
                         if remainingLetters[i] == keystrokes[x]:
                             print("Removing " + str(remainingLetters[i]) + " from remainingLetters")
                             remainingLetters.pop(i)
                             break
+                    print("Removing " + str(keystrokes[x]) + " from keystrokes")
                     keystrokes[x] = ''
-                    for letter in keystrokes:
-                        print(letter)
-            print("All green letters marked.")
+                    print("Remaining letters are: " + str(remainingLetters))
+                    print("Remaining keystrokes are: " + str(keystrokes) + "\n")
+            print("All green letters, if any, are marked\n")
 
             #All remaining letters are not in the correct positions
+            print("Marking letters that are present but in wrong location as well as letters not present")
             for x in range(0, N_COLS):
+                print("Checking letter " + str(x) + " of user's guess")
                 if keystrokes[x] == '':
-                    pass
+                    print("Letter " + str(x) + " of user's guess already previously marked correct")
+                    print("Moving to next letter\n")
                 elif keystrokes[x] in wordToGuess and keystrokes[x] in remainingLetters:
-                    print("Verified keystroke is in word to guess and also if in remaining letters")
                     print("Remaining letters are: " + str(remainingLetters))
-                    print(str(keystrokes[x]) + " is in word to guess.")
+                    print("Verified letter " + str(x) + "-" + str(keystrokes[x]) + " of user's guess is in remaining letters")
                     gw.set_square_color(gw.get_current_row(), x, PRESENT_COLOR)
                     print("Set row " + str(gw.get_current_row()) + " and column " + str(x) + " to yellow")
                     if gw.get_key_color(keystrokes[x].upper()) != CORRECT_COLOR:
                         gw.set_key_color(keystrokes[x].upper(), PRESENT_COLOR)
-                    print("Removing " + str(keystrokes[x]) + " from keystrokes and remaining letters")
+                        print("Since key " + str(keystrokes[x].upper()) + " is not marked correct, marked as present")
                     for i in range (0, len(remainingLetters)):
                         if remainingLetters[i] == keystrokes[x]:
                             print("Removing " + str(remainingLetters[i]) + " from remainingLetters")
                             remainingLetters.pop(i)
                             break
-                    for letter in keystrokes:
-                        print(letter)
+                    print("Remaining letters are: " + str(remainingLetters))
+                    print("Removing " + str(keystrokes[x]) + " from keystrokes")
                     keystrokes[x] = ''
+                    print("Remaining keystrokes are: " + str(keystrokes))
+                    print("Moving to next letter\n")
                 else:
+                    print("Remaining letters are: " + str(remainingLetters))
+                    print("Could not find letter " + str(x) + "-" + str(keystrokes[x]) + " of user's guess in remaining letters")
                     gw.set_square_color(gw.get_current_row(), x, MISSING_COLOR)
+                    print("Set row " + str(gw.get_current_row()) + " and column " + str(x) + " to gray")
                     if gw.get_key_color(keystrokes[x].upper()) != CORRECT_COLOR:
                         if gw.get_key_color(keystrokes[x].upper()) != PRESENT_COLOR:
                             gw.set_key_color(keystrokes[x].upper(), MISSING_COLOR)
+                            print("Since key " + str(keystrokes[x].upper()) + " is not marked correct or present, marked as not present")
 
-                    print(str(wordToGuess[x]) + " not found...keystrokes are")
-                    for letter in keystrokes:
-                        print(letter)
+                    print("Moving to next letter\n")
 
-                # elif wordToGuess[x] in currentGuessWord: 
-                #     color = PRESENT_COLOR
-
-                # else :
-                #     color = MISSING_COLOR
-                #     print("x:", x)
-                
-                # if color == CORRECT_COLOR:
-                #     gw.set_key_color(currentGuessWord[x].upper(), color)
-                # elif color == PRESENT_COLOR:
-                #     if gw.get_key_color(currentGuessWord[x].upper()) == CORRECT_COLOR:
-                #         pass
-                #     else:
-                #         gw.set_key_color(currentGuessWord[x].upper(), color)
-                # else:
-                #     if gw.get_key_color(currentGuessWord[x].upper()) != MISSING_COLOR:
-                #         pass
-                #     else: 
-                #         gw.set_key_color(currentGuessWord[x].upper(), color)
-
-                # gw.set_key_color(currentGuessWord[x].upper(), color)
-
+            #Move to next row when done processing valid user entry
+            print("There are no letters remaining...user input processed")
             gw.set_current_row(gw.get_current_row() + 1)
-            #Color the word appropriately
+            print("Wordle set to next row...ready for input\n")
 
+        #If word is not in wordlist, do nothing
         else:
             gw.show_message("Not in word list")
-            #gw. clear out the current row bc the word is not in word list
+            print("User input " + currentGuessWord + " was not accepted because it is not in wordlist\n")
 
     gw = WordleGWindow()
-    #randWordToFirstRow()
+    #****COMMENT FOR GRADER****
+    #This can be uncommented for milestone 1. We assumed that we are supposed to build Wordle
+    #the way it works in real life once we got to milestones 3/4, so we commented this next line out.
+    #RandomWordToFirstRow()
     gw.add_enter_listener(enter_action)
-    
 
 # Startup code
 
