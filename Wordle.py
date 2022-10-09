@@ -40,16 +40,16 @@ def wordle():
         remainingLetters = list(wordToGuess)
         
         #Make a list for letters of the user's guess
-        keystrokes = []
+        userInputs = []
 
-        #Get the user inputs from wordle and place them in keystrokes list
+        #Get the user inputs from wordle and place them in list
         for i in range(0,5):
             letter = gw.get_square_letter(gw.get_current_row(),i) 
-            keystrokes.append(letter.lower())
+            userInputs.append(letter.lower())
            
 
-        #makes list of keystrokes into a string
-        currentGuessWord = ''.join(keystrokes)
+        #makes list of user inputs into a string
+        currentGuessWord = ''.join(userInputs)
         print("**********")
         print("Users' guess is: " + currentGuessWord)
 
@@ -69,64 +69,62 @@ def wordle():
             print(currentGuessWord + " is a valid guess\n")
             
             #This for loop takes care of all letter/keys that should be green
-            #It removes the correct letters from the user's keystrokes the letters that remain to be guessed
+            #It removes the correct letters from the user's input list and from the letters that remain to be guessed
             print("Marking letters that are in the correct position")
             for x in range(0, N_COLS):
-                if wordToGuess[x] == keystrokes[x]:
+                if wordToGuess[x] == userInputs[x]:
                     print("Positon " + str(x) + " is a match")
                     gw.set_square_color(gw.get_current_row(), x, CORRECT_COLOR)
                     print("Set row " + str(gw.get_current_row()) + " and column " + str(x) + " to green")
-                    gw.set_key_color(keystrokes[x].upper(), CORRECT_COLOR)
+                    print("Marking " + str(userInputs[x].upper()) + " key as correct")
+                    gw.set_key_color(userInputs[x].upper(), CORRECT_COLOR)
                     for i in range (0, len(remainingLetters)):
-                        if remainingLetters[i] == keystrokes[x]:
+                        if remainingLetters[i] == userInputs[x]:
                             print("Removing " + str(remainingLetters[i]) + " from remainingLetters")
                             remainingLetters.pop(i)
                             break
-                    print("Removing " + str(keystrokes[x]) + " from keystrokes")
-                    keystrokes[x] = ''
+                    print("Removing " + str(userInputs[x]) + " from user inputs")
+                    userInputs[x] = ''
                     print("Remaining letters are: " + str(remainingLetters))
-                    print("Remaining keystrokes are: " + str(keystrokes) + "\n")
+                    print("Remaining user inputs are: " + str(userInputs) + "\n")
             print("All green letters, if any, are marked\n")
 
             #All remaining letters are not in the correct positions
             print("Marking letters that are present but in wrong location as well as letters not present")
             for x in range(0, N_COLS):
                 print("Checking letter " + str(x) + " of user's guess")
-                if keystrokes[x] == '':
+                if userInputs[x] == '':
                     print("Letter " + str(x) + " of user's guess already previously marked correct")
                     print("Moving to next letter\n")
-                elif keystrokes[x] in wordToGuess and keystrokes[x] in remainingLetters:
+                elif userInputs[x] in remainingLetters:
                     print("Remaining letters are: " + str(remainingLetters))
-                    print("Verified letter " + str(x) + "-" + str(keystrokes[x]) + " of user's guess is in remaining letters")
+                    print("Verified letter " + str(x) + "-" + str(userInputs[x]) + " of user's guess is in remaining letters")
                     gw.set_square_color(gw.get_current_row(), x, PRESENT_COLOR)
                     print("Set row " + str(gw.get_current_row()) + " and column " + str(x) + " to yellow")
-                    if gw.get_key_color(keystrokes[x].upper()) != CORRECT_COLOR:
-                        gw.set_key_color(keystrokes[x].upper(), PRESENT_COLOR)
-                        print("Since key " + str(keystrokes[x].upper()) + " is not marked correct, marked as present")
+                    if gw.get_key_color(userInputs[x].upper()) != CORRECT_COLOR:
+                        gw.set_key_color(userInputs[x].upper(), PRESENT_COLOR)
+                        print("Since key " + str(userInputs[x].upper()) + " is not marked correct, marked as present")
                     for i in range (0, len(remainingLetters)):
-                        if remainingLetters[i] == keystrokes[x]:
+                        if remainingLetters[i] == userInputs[x]:
                             print("Removing " + str(remainingLetters[i]) + " from remainingLetters")
                             remainingLetters.pop(i)
                             break
                     print("Remaining letters are: " + str(remainingLetters))
-                    print("Removing " + str(keystrokes[x]) + " from keystrokes")
-                    keystrokes[x] = ''
-                    print("Remaining keystrokes are: " + str(keystrokes))
                     print("Moving to next letter\n")
                 else:
                     print("Remaining letters are: " + str(remainingLetters))
-                    print("Could not find letter " + str(x) + "-" + str(keystrokes[x]) + " of user's guess in remaining letters")
+                    print("Could not find letter " + str(x) + "-" + str(userInputs[x]) + " of user's guess in remaining letters")
                     gw.set_square_color(gw.get_current_row(), x, MISSING_COLOR)
                     print("Set row " + str(gw.get_current_row()) + " and column " + str(x) + " to gray")
-                    if gw.get_key_color(keystrokes[x].upper()) != CORRECT_COLOR:
-                        if gw.get_key_color(keystrokes[x].upper()) != PRESENT_COLOR:
-                            gw.set_key_color(keystrokes[x].upper(), MISSING_COLOR)
-                            print("Since key " + str(keystrokes[x].upper()) + " is not marked correct or present, marked as not present")
+                    if gw.get_key_color(userInputs[x].upper()) != CORRECT_COLOR:
+                        if gw.get_key_color(userInputs[x].upper()) != PRESENT_COLOR:
+                            gw.set_key_color(userInputs[x].upper(), MISSING_COLOR)
+                            print("Since key " + str(userInputs[x].upper()) + " is not marked correct or present, marked as not present")
 
                     print("Moving to next letter\n")
 
             #Move to next row when done processing valid user entry
-            print("There are no letters remaining...user input processed")
+            print("There are no more user letters remaining...user input processed")
             gw.set_current_row(gw.get_current_row() + 1)
             print("Wordle set to next row...ready for input\n")
 
